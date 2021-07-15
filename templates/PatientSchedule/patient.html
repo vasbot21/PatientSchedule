@@ -1,0 +1,51 @@
+{% extends 'PatientSchedule/base.html' %}
+{% block title %}
+    Пациент
+{% endblock %}
+{% block main %}
+    <section class="d-flex justify-content-center">
+            <form action="" method="post" style="width: 22rem" class="px-1">
+                {% csrf_token %}
+                <div class="form-outline mb-3">
+                    <input id="id_surname" type="text" class="form-control" name="surname" maxlength="50" required value="{{ surname }}" placeholder="Иванов">
+                </div>
+                <div class="form-outline mb-3">
+                    <input id="id_name" type="text" name="name" class="form-control" maxlength="50" required value="{{ name }}" placeholder="Иван">
+                </div>
+                <div class="form-outline mb-3">
+                    <input id="id_patronymic" type="text" class="form-control" name="patronymic" maxlength="50" placeholder="Иванович"
+                        {% if patronymic %}
+                           value="{{ patronymic }}"
+                        {% endif %}
+                    >
+                </div>
+                <div class="form-outline mb-3">
+                    <input id="id_phone" type="text" class="form-control" name="phone" maxlength="10" required value="{{ phone }}" placeholder="7071234567">
+                </div>
+                <div class="form-outline mb-3">
+                    <input id="id_birth_year" type="text" class="form-control" name="birth_year" maxlength="4" placeholder="2001, 01 или 1"
+                        {% if birth_year %}
+                           value="{{ birth_year }}"
+                        {% endif %}
+                    >
+                </div>
+                <div class="form-check mb-3">
+                    <input id="id_black_list" type="checkbox" class="form-check-input" name="black_list"
+                        {% if black_list %}
+                            checked
+                        {% endif %}
+                    >
+                 <label for="id_black_list">Черный список</label>
+                </div>
+                <div class="form-outline mb-3">
+                    <textarea id="id_text" name="text" class="form-control" cols="40" rows="5">
+                        {% if patronymic %}
+                            {{ text }}
+                        {% endif %}
+                    </textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                <a class="btn btn-danger mt-3" href="{% url 'delete_patient' id %}">Удалить пациента</a>
+            </form>
+    </section>
+{% endblock %}

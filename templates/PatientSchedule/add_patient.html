@@ -1,0 +1,44 @@
+{% extends 'PatientSchedule/base.html' %}
+{% block title %}
+    Добавить пациента
+{% endblock %}
+{% block main %}
+    <section class="d-flex justify-content-center">
+            <form action="" method="post" name="add_patient" style="width: 22rem" class="px-1">
+                {% csrf_token %}
+                <div class="form-outline mb-3">
+                    {{ form.surname }}
+                </div>
+                <div class="form-outline mb-3">
+                    {{ form.name }}
+                </div>
+                <div class="form-outline mb-3">
+                    {{ form.patronymic }}
+                </div>
+                <div class="form-outline mb-3">
+                    {{ form.phone }}
+                </div>
+                <div class="form-outline mb-3">
+                    {{ form.birth_year }}
+                </div>
+                <div class="form-check mb-3">
+                    {{ form.black_list }}
+                    {{ form.black_list.label_tag }}
+                </div>
+                <div class="form-outline mb-3">
+                    {{ form.text }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Сохранить</button>
+            </form>
+    </section>
+{% endblock %}
+{% block scripts %}
+    <script>
+        document.forms["add_patient"]["surname"].setAttribute("placeholder", "Иванов")
+        document.forms["add_patient"]["name"].setAttribute("placeholder", "Иван")
+        document.forms["add_patient"]["patronymic"].setAttribute("placeholder", "Иванович")
+        document.forms["add_patient"]["phone"].setAttribute("placeholder", "7071234567")
+        document.forms["add_patient"]["birth_year"].setAttribute("placeholder", "2001, 01 или 1")
+        document.forms["add_patient"]["text"].setAttribute("placeholder", "Дополнительная информация")
+    </script>
+{% endblock %}

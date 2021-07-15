@@ -1,0 +1,91 @@
+{% extends 'PatientSchedule/base.html' %}
+{% block title %}
+    Пациенты
+{% endblock %}
+{% block main %}
+    <div>
+        <input type="text" value id="search_patient" class="form-control mb-3" placeholder="Поиск по ФИО, телефону или дате рождения">
+    </div>
+    <div id="filter" class="row">
+        <div id="patient_number" class="col-1 mb-2">
+            {{ number }}
+        </div>
+        <div class=" col-md-3 col-lg-3 col-xl-2 col-xxl-2 mb-2">
+            <select class="form_select" id="surname_filter">
+                <option value="1">По фамилии: А-Я</option>
+                <option value="2">По фамилии: Я-А</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-lg-3 col-xl-2 col-xxl-2 mb-2">
+            <select class="form_select" id="name_filter">
+                <option value="1">По имени: А-Я</option>
+                <option value="2">По имени: Я-А</option>
+            </select>
+        </div>
+        <div class="col-md-2 col-lg-2 col-xl-2 col-xxl-2 mb-2">
+            <select class="form_select" id="patronymic_filter">
+                <option value="1">По отчеству: А-Я</option>
+                <option value="2">По отчеству: Я-А</option>
+            </select>
+        </div>
+    </div>
+    <table class="table">
+        <tbody id="patient_list">
+            {% for patient_id, patient_info in patients.items %}
+                {% for key, value in patient_info.items %}
+                    {% if key == 'black_list' and value == '1' %}
+                        <tr id="patient_{{ patient_id }}" class="table-danger">
+                    {% elif key == 'black_list' and value == '0' %}
+                        <tr id="patient_{{ patient_id }}">
+                    {% endif %}
+                {% endfor %}
+                    {% for key, value in patient_info.items %}
+                        {% if key != 'patient' and key != 'black_list' and key != 'id' %}
+                            <td><a href="{% url 'patient' patient_id %}" class="nav-link">{{ value }}</a></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block scripts %}
+    <script>
+        const search_input = document.getElementById("search_patient")
+        const surname_filter = document.getElementById("surname_filter")
+        const name_filter = document.getElementById("name_filter")
+        const patronymic_filter = document.getElementById("patronymic_filter")
+        let filtered_patients = []
+        const data = JSON.parse('{{ patients }}'.replaceAll('&#x27;', '"'))
+        let patients = []
+        for (let key in data) {
+            if (data.hasOwnProperty(key)) {
+                patients.push(data[key])
+            }
+        }
+        search_input.addEventListener('keyup', (e)=>{
+            document.getElementById("patient_list").innerHTML = ''
+            filtered_patients = patients.filter(info=> info['patient'].includes(e.target.value))
+            if (filtered_patients.length > 0) {
+                document.getElementById("patient_number").innerHTML = filtered_patients.length.toString()
+                filtered_patients.map(info=>{
+                    let url = '/patient_' + info['id']
+                    document.getElementById("patient_list").innerHTML +=
+                        '<tr id="patient_' + info['id'] + '">' +
+                            '<td><a href="' + url + '" class="nav-link">' + info['surname'] + '</a></td>' +
+                            '<td><a href="' + url + '" class="nav-link">' + info['name'] + '</a></td>' +
+                            '<td><a href="' + url + '" class="nav-link">' + info['patronymic'] + '</a></td>' +
+                            '<td><a href="' + url + '" class="nav-link">' + info['phone'] + '</a></td>' +
+                            '<td><a href="' + url + '" class="nav-link">' + info['birth_year'] + '</a></td>' +
+                        '</tr>'
+                    if (info['black_list'] === '1') {
+                        document.getElementById("patient_" + info['id']).setAttribute("class", "table-danger")
+                    }
+                })
+            } else {
+                document.getElementById("patient_number").innerHTML = ''
+                document.getElementById("patient_list").innerHTML = 'Нет результатов поиска'
+            }
+        })
+    </script>
+{% endblock %}
